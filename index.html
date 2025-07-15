@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Magic Handwriting Fun! ✨</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Balsamiq Sans for a playful feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for body and form elements */
+        body {
+            font-family: 'Balsamiq Sans', cursive; /* Playful font */
+            background-color: #F8F2FF; /* Very light purple background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensure it takes full viewport height */
+            padding: 1rem; /* Add some padding for smaller screens */
+        }
+        .container {
+            max-width: 1000px; /* Increased max-width for wider content area */
+            background-color: #FFFFFF; /* White background for the card */
+            border-radius: 20px; /* More rounded corners for a softer look */
+            box-shadow: 0 10px 30px rgba(106, 103, 232, 0.2); /* Playful shadow */
+            /* Adjusted padding to give more width to inner elements */
+            padding: 1rem; /* Default padding for mobile */
+        }
+
+        /* Responsive padding for container */
+        @media (min-width: 640px) { /* sm breakpoint */
+            .container {
+                padding: 1.5rem; /* Slightly more padding for small desktops/tablets */
+            }
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .container {
+                padding: 2.5rem; /* More padding for larger screens */
+            }
+        }
+        @media (min-width: 1024px) { /* lg breakpoint */
+            .container {
+                padding: 3rem; /* Max padding for very large screens */
+            }
+        }
+
+
+        .form-label {
+            @apply block text-base font-bold text-purple-700 mb-2; /* Brighter, bolder labels */
+        }
+        /* Specific styling for textarea and general inputs */
+        #textInput,
+        #fontFile,
+        #backgroundImage {
+            @apply mt-1 block w-full px-4 py-3 border border-purple-300 rounded-xl shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-base;
+        }
+
+        /* Specific styling for the font selection dropdown */
+        #selectedFontName {
+            @apply mt-1 block px-4 py-2 border border-purple-300 rounded-xl shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 text-base;
+            height: 48px; /* Explicit height for better control */
+            line-height: 1.5; /* Adjust line height for vertical alignment */
+            width: 75%; /* Decreased width, e.g., 75% of parent */
+            max-width: 400px; /* Optional: set a max-width to prevent it from getting too wide on large screens */
+        }
+        /* Wrapper to center the dropdown */
+        .form-select-wrapper {
+            display: flex;
+            justify-content: center; /* Center the dropdown */
+        }
+
+        /* Specific styling for the submit button */
+        #handwritingForm button[type="submit"] {
+            /* SIGNIFICANTLY larger button with maximum rounding */
+            @apply inline-flex justify-center items-center py-6 px-12 border border-transparent shadow-lg text-3xl font-bold rounded-full text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-300 ease-in-out transform hover:scale-105;
+            background-image: linear-gradient(to right, #6A67E8, #8E67E8); /* Gradient for buttons */
+            min-width: 280px; /* Ensure a minimum width */
+            min-height: 80px; /* Ensure a minimum height */
+        }
+        #handwritingForm button[type="submit"]:hover {
+            background-image: linear-gradient(to right, #8E67E8, #6A67E8); /* Reverse gradient on hover */
+        }
+
+        .btn-green {
+            background-image: linear-gradient(to right, #7ED957, #A8E657); /* Green gradient for download */
+        }
+        .btn-green:hover {
+            background-image: linear-gradient(to right, #A8E657, #7ED957); /* Reverse green gradient on hover */
+        }
+
+        .radio-group {
+            @apply flex flex-wrap items-center space-x-4 sm:space-x-6; /* Spacing for radio buttons, responsive */
+        }
+        .radio-label {
+            @apply ml-2 block text-base text-gray-800;
+        }
+        /* Custom radio button styling */
+        .form-radio {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: inline-block;
+            width: 1.25rem; /* Larger radio buttons */
+            height: 1.25rem;
+            border: 2px solid #A78BFA; /* Purple border */
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+        }
+        .form-radio:checked {
+            background-color: #6A67E8; /* Purple fill when checked */
+            border-color: #6A67E8;
+        }
+        .form-radio:checked::after {
+            content: '';
+            display: block;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Loading spinner animation */
+        .loading-spinner {
+            border: 4px solid rgba(106, 103, 232, 0.2); /* Light purple for spinner base */
+            border-left-color: #6A67E8; /* Playful purple for spinner */
+            border-radius: 50%;
+            width: 32px; /* Even larger spinner */
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Slider styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            background: #E0BBE4; /* Light pink/purple track */
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px; /* Larger thumb */
+            height: 25px;
+            border-radius: 50%;
+            background: #6A67E8; /* Playful purple thumb */
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #6A67E8;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* File input styling */
+        input[type="file"]::file-selector-button {
+            background-image: linear-gradient(to right, #A78BFA, #C4B5FD); /* Lighter purple gradient */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px; /* Fully rounded */
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        input[type="file"]::file-selector-button:hover {
+            background-image: linear-gradient(to right, #C4B5FD, #A78BFA); /* Reverse gradient on hover */
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container mx-auto bg-white p-6 sm:p-8 rounded-lg shadow-lg">
+        <h1 class="text-4xl sm:text-5xl font-bold text-center text-purple-800 mb-6 flex items-center justify-center gap-3">
+            ✏️ Magic Handwriting Fun! ✨
+        </h1>
+        <p class="text-center text-gray-600 mb-8 text-base sm:text-lg leading-relaxed">
+            Type your words, pick a bouncy font (or upload your own!), and watch them transform into
+            super cool handwriting! You can even choose the color and add a fun paper background.
+            Get ready to create awesome notes and drawings! 🚀
+        </p>
+
+        <form id="handwritingForm" class="space-y-6">
+            <div>
+                <label for="textInput" class="form-label">✍️ What do you want to write?</label>
+                <textarea id="textInput" name="textInput" rows="8" class="form-textarea" placeholder="Type your secret message or fun story here..." required></textarea>
+            </div>
+
+            <div>
+                <label for="fontFile" class="form-label">⬆️ Upload your special font (.ttf file):</label>
+                <input type="file" id="fontFile" name="fontFile" accept=".ttf" class="form-input">
+            </div>
+
+            <div>
+                <label for="selectedFontName" class="form-label">🌈 Choose a playful font:</label>
+                <div class="form-select-wrapper">
+                    <select id="selectedFontName" name="selectedFontName" class="form-select">
+                        <option value="None">None (or upload your own!)</option>
+                        <!-- Options for pre-installed fonts will be populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label for="fontSize" class="form-label">📏 Handwriting Size: <span id="fontSizeValue">16</span>px</label>
+                <input type="range" id="fontSize" name="fontSize" min="10" max="72" value="16" step="1" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+            </div>
+
+            <div>
+                <label class="form-label">🎨 Handwriting Color:</label>
+                <div class="radio-group">
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="fontColor" value="Black" class="form-radio text-indigo-600" checked>
+                        <span class="radio-label">🖤 Black</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="fontColor" value="Blue" class="form-radio text-indigo-600">
+                        <span class="radio-label">💙 Blue</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="fontColor" value="Red" class="form-radio text-indigo-600">
+                        <span class="radio-label">❤️ Red</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label for="backgroundImage" class="form-label">🖼️ Add a cool paper background (Optional):</label>
+                <input type="file" id="backgroundImage" name="backgroundImage" accept="image/*" class="form-input">
+            </div>
+
+            <button type="submit" class="btn-primary w-full flex items-center justify-center">
+                <span id="submitText">✨ Make it Magical! ✨</span>
+                <div id="loadingSpinner" class="loading-spinner ml-3 hidden"></div>
+            </button>
+        </form>
+
+        <div id="messageContainer" class="mt-6 p-4 rounded-md text-sm" style="display: none;"></div>
+
+        <div id="outputSection" class="mt-8 border-t border-purple-200 pt-8 hidden">
+            <h2 class="text-2xl font-bold text-purple-800 mb-4 flex items-center gap-2">
+                🎉 Your Masterpiece!
+            </h2>
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">Preview:</h3>
+                <img id="previewImage" src="" alt="Handwriting Preview" class="w-full h-auto rounded-xl shadow-xl border-4 border-purple-300" style="max-height: 600px; object-fit: contain;">
+            </div>
+            <div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">Download your fun creation:</h3>
+                <a id="downloadPdfLink" href="#" download="magic_handwriting.pdf" class="btn-primary btn-green">⬇️ Download PDF!</a>
+            </div>
+        </div>
+    </div>
+  
+    <script>
+    // ✅ Replaced hardcoded backend URL with relative API proxy path
+    const API_ROOT = '/api';
+
+    fontSize.addEventListener('input', () => {
+        fontSizeValue.textContent = fontSize.value;
+    });
+
+    async function fetchFonts() {
+        try {
+            const response = await fetch(`${API_ROOT}/fonts`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            selectedFontName.innerHTML = '<option value="None">None (or upload your own!)</option>';
+            data.fonts.forEach(font => {
+                if (font !== "None") {
+                    const option = document.createElement('option');
+                    option.value = font;
+                    option.textContent = font;
+                    selectedFontName.appendChild(option);
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching fonts:', error);
+            showMessage('Problem loading fonts. Is your backend up? ' + error.message, 'error');
+        }
+    }
+
+    function showMessage(message, type = 'info') {
+        messageContainer.textContent = message;
+        messageContainer.style.display = 'block';
+        messageContainer.className = 'mt-6 p-4 rounded-xl text-base ' +
+            (type === 'error' ? 'bg-red-100 text-red-700 font-semibold border border-red-300' :
+                type === 'success' ? 'bg-green-100 text-green-700 font-semibold border border-green-300' :
+                    'bg-blue-100 text-blue-700 font-semibold border border-blue-300');
+    }
+
+    function hideMessage() {
+        messageContainer.style.display = 'none';
+    }
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        hideMessage();
+        outputSection.classList.add('hidden');
+
+        submitText.textContent = 'Making Magic... 🪄';
+        loadingSpinner.classList.remove('hidden');
+        submitButton.disabled = true;
+
+        const formData = new FormData();
+        formData.append('text_input', textInput.value);
+        formData.append('font_size', fontSize.value);
+        formData.append('font_color', document.querySelector('input[name="fontColor"]:checked').value);
+
+        if (fontFile.files.length > 0) {
+            formData.append('font_file', fontFile.files[0]);
+        } else {
+            formData.append('selected_font_name', selectedFontName.value);
+        }
+
+        if (backgroundImage.files.length > 0) {
+            formData.append('background_image', backgroundImage.files[0]);
+        }
+
+        try {
+            const response = await fetch(`${API_ROOT}/generate_handwriting`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            const imageUrl = `${API_ROOT}${result.image_url}`;
+            const pdfUrl = `${API_ROOT}${result.pdf_url}`;
+
+            previewImage.src = imageUrl;
+            downloadPdfLink.href = pdfUrl;
+            outputSection.classList.remove('hidden');
+            showMessage('Yay! Your handwriting magic is ready!', 'success');
+        } catch (error) {
+            console.error('Error:', error);
+            showMessage(`Error creating handwriting: ${error.message}`, 'error');
+        } finally {
+            submitText.textContent = '✨ Make it Magical! ✨';
+            loadingSpinner.classList.add('hidden');
+            submitButton.disabled = false;
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchFonts();
+    });
+    </script>
+</body>
+</html>
